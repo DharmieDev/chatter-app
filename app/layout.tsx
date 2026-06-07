@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@wrksz/themes/next";
 import "./globals.css";
+import Providers from "./providers/providers";
+import Navbar from "@/components/layout/Navbar";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -9,7 +11,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
+  title: "Chatter app",
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
@@ -19,6 +21,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,14 +30,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
+        <Providers>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
+          >
+            <Navbar />
           {children}
         </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
