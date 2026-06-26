@@ -3,7 +3,8 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "@wrksz/themes/next";
 import "./globals.css";
 import Providers from "./providers/providers";
-import Navbar from "@/components/layout/Navbar";
+import { Suspense } from "react";
+import NavbarServer from "@/components/layout/NavbarServer";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -22,11 +23,13 @@ const geistSans = Geist({
 });
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
@@ -37,7 +40,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
           >
-            <Navbar />
+            <Suspense fallback={<div className="h-16 border-b border-stone-800 animate-pulse" />}>
+            <NavbarServer />
+            </Suspense>
           {children}
         </ThemeProvider>
         </Providers>
