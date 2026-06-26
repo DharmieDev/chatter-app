@@ -17,7 +17,11 @@ const playfairDisplayItalic = Playfair_Display({
   display: "swap",
 });
 
-export default function Navbar() {
+interface NavbarProps {
+  username: string | null;
+}
+
+export default function Navbar({ username }: NavbarProps) {
   const user = useAuth((store) => store.user);
   const isLoading = useAuth((store) => store.isLoading);
 
@@ -41,12 +45,12 @@ export default function Navbar() {
           <SearchBar />
           <NotificationBell />
           <Link
-            href="main/write"
+            href="/main/write"
             className="flex items-center gap-2 px-4 py-2 bg-[#E55B2B] hover:bg-[#D44A1A] text-white text-sm font-medium rounded-md transition-colors"
           >
             <span>✦</span> Write
           </Link>
-          <UserView />
+          <UserView username={username} />
         </div>
       ) : (
         <GuestView />
