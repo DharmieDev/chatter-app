@@ -5,17 +5,28 @@ import { createClient } from "@/lib/supabase/client";
 import { ChevronDown, LogOut, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export default function UserView() {
+interface UserViewProps {
+  username: string | null;
+}
+
+export default function UserView({ username }: UserViewProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const user = useAuth((state) => state.user);
+  const router = useRouter();
 
   const handleLogout = async () => {
     setIsOpen(false);
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (!error) {
+      router.push('/')
+      router.refresh()
+    }
   };
 
   // close dropdown on click outside
@@ -39,6 +50,7 @@ export default function UserView() {
   const avatarUrl =
     user.user_metadata?.avatar_url ?? user.user_metadata?.picture;
 
+
   return (
     <div ref={dropdownRef}>
       {/*Trigger button*/}
@@ -50,7 +62,9 @@ export default function UserView() {
           <Image
             src={avatarUrl}
             alt={`${userName}'s avatar`}
-            fill
+            sizes="40px"
+            width={40}
+            height={40}
             className="w-8 h-8 rounded-full object-cover"
           />
         </div>
@@ -69,8 +83,11 @@ export default function UserView() {
           </div>
 
           <Link
-            href="/profile"
-            onClick={() => setIsOpen(false)}
+            href={username ? `/main/profile/${username}` : '#'}
+            onClick={(e) => {
+              if (!username) e.preventDefault();
+              setIsOpen(false);
+            }}
             className="flex gap-2.5 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
             <User className="w-4 h-4" />
